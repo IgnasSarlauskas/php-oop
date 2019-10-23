@@ -1,7 +1,6 @@
 <?php
 
 class FileDB {
-
     private $file_name;
 
     /** @var $data array Duomenu masyvas sugeneruotas is failo */
@@ -20,7 +19,11 @@ class FileDB {
     public function load() {
         $this->data = file_to_array($this->file_name);
     }
-    
+
+    public function getData() {
+        return $this->data;
+    }
+
     /**
      * F-ija, nustatanti duomenų masyvą
      * @param type $data_array
@@ -29,8 +32,37 @@ class FileDB {
         $this->data = $data_array;
     }
     
+    public function createTable($table_name) {
+        if(!isset($this->data[$table_name])) {
+            $this->data[$table_name] = [];
+        } else {
+            return false;
+        }
+    }
+
+    public function getRow($table, $row_id) {
+        if (isset($this->data[$table])) {
+            return $this->data[$table][$row_id];
+        }
+    }
+
+    public function addRow($table, $row) {
+        if (isset($this->data[$table])) {
+            return $this->data[$table][] = $row;
+        }
+    }
+
+    public function replaceRow($table, $row, $row_id) {
+        if (isset($this->data[$table])) {
+           return $this->data[$table][$row_id] = $row;
+        }
+    }
+
+    /**
+     * F-ija, irasanti masyva i faila
+     */
     public function save() {
-        $this->data = array_to_file($this->file_name);
+        return array_to_file($this->data, $this->file_name);
     }
 
 }
