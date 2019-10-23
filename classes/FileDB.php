@@ -34,8 +34,8 @@ class FileDB {
     
     public function createTable($table_name) {
         if (!$this->tableExists($table_name)) {
-            $this->data[$table_name] = [];
-            return true;
+           $this->data[$table_name] = [];
+           return true;
         } 
         
         return false;
@@ -72,6 +72,12 @@ class FileDB {
      */
     public function save() {
         return array_to_file($this->data, $this->file_name);
+    }
+    
+    public function dropTable($table_name) {
+        if ($this->tableExists($table_name)) {
+            unset($this->data[$table_name]);
+        }
     }
 
 }
