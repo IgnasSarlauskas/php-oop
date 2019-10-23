@@ -17,6 +17,7 @@ $db = new FileDB('test.json');
 //var_dump($db->addRow('table', ['key3' => 'value3']));
 //var_dump($db->replaceRow('table', ['key3'=>'replaced'], 1));
 
-var_dump($db->createTable('teiblas'));
+var_dump($db->createTable('table'));
 
+var_dump($db->insertRow('table','innerTable', 1));
 
