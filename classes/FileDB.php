@@ -79,5 +79,14 @@ class FileDB {
             unset($this->data[$table_name]);
         }
     }
+    
+    public function truncateTable($table_name) {
+        if ($this->tableExists($table_name)) {
+            $this->data[$table_name] = [];
+            return true;
+        }
+        
+        return false;
+    }
 
 }
