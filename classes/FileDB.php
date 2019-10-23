@@ -34,10 +34,19 @@ class FileDB {
     
     public function createTable($table_name) {
         if(!isset($this->data[$table_name])) {
-            $this->data[$table_name] = [];
-        } else {
-            return false;
+           $this->data[$table_name] = [];
+           return true;
+        } 
+        
+        return false;
+    }
+    
+    public function tableExists($table_name) {
+        if(isset($this->data[$table_name])) {
+            return true;
         }
+        
+        return false;
     }
 
     public function getRow($table, $row_id) {
