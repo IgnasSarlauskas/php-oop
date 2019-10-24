@@ -7,7 +7,7 @@ class Drink {
     private $data = [];
 
     public function getData() {
-        return $array = [
+        return [
             'name' => $this->getName(),
             'amount' => $this->getAmount(),
             'abarot' => $this->getAbarot(),
