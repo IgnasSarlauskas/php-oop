@@ -12,6 +12,7 @@ class FileDB {
      */
     public function __construct($file_name) {
         $this->file_name = $file_name;
+        $this->load();
     }
 
     /**
@@ -50,28 +51,28 @@ class FileDB {
         return false;
     }
 
-    public function getRow($table, $row_id) {
-        if (isset($this->data[$table])) {
-            return $this->data[$table][$row_id];
+    public function getRow($table_name, $row_id) {
+        if ($this->rowExists($table_name, $row_id)) {
+            $row = $this->data[$table_name][$row_id];
+            return $row;
         }
+
+        return false;
     }
 
     public function insertRow($table_name, $row, $row_id = null) {
         if ($row_id !== null) {
-            if ($this->tableExists($table_name)) {
-                if (isset($this->data[$table_name][$row])) {
-                    $this->data[$table_name][$row_id] = $row;
-                    return $row_id;
-                }
-                return false;
+            if (!isset($this->data[$table_name][$row_id])) {
+                $this->data[$table_name][$row_id] = $row;
+                return $row_id;
             }
+            return false;
         } else {
             $this->data[$table_name][] = $row;
             end($this->data[$table_name]);         // move the pointer to the end of array
             $row_id = key($this->data[$table_name]);
             return $row_id;
         }
-        return false;
     }
 
     public function replaceRow($table, $row, $row_id) {
@@ -100,6 +101,67 @@ class FileDB {
         }
 
         return false;
+    }
+
+    public function rowExists($table_name, $row_id) {
+        if (isset($this->data[$table_name][$row_id])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function insertRowIfNotExists($table_name, $row, $row_id) {
+        if ($row_id !== null) {
+            $this->data[$table_name][] = $row;
+            end($this->data[$table_name]);         // move the pointer to the end of array
+            $row_id = key($this->data[$table_name]);
+            return $row_id;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateRow($table_name, $row_id, $row) {
+        if ($this->rowExists($table_name, $row_id)) {
+            return $this->data[$table][$row_id] = $row;
+            return true;
+        }
+
+        return false;
+    }
+
+    public function deleteRow($table_name, $row_id) {
+        if ($this->rowExists($table_name, $row_id)) {
+            $this->data[$table_name][$row_id] = [];
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getRowsWhere($table_name, $conditions) {
+        $rows = [];
+        foreach ($this->data[$table_name] as $table_row_id => $table_row) {
+            $success = true;
+            foreach ($conditions as $condition_id => $condition) {
+                if ($table_row[$condition_id] === $condition) { 
+                    $success = false;
+                    break;
+                }
+            }
+            
+            if ($success) {
+                $rows['table_row_id'] = $table_row_id;
+                $rows[$table_row_id] = $table_row;
+            }
+        }
+        
+        return $rows;
+    }
+    
+    public function __destruct() {
+        $this->save();
     }
 
 }

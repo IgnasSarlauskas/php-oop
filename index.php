@@ -10,14 +10,25 @@ $db = new FileDB('test.json');
 //$db->setData(['table' => []]);
 
 
-//$db->save();
+
 //var_dump($db);
-//var_dump($db->getRow(0, 'table'));
-//var_dump($db->addRow('table', ['key2' => 'value2']));
-//var_dump($db->addRow('table', ['key3' => 'value3']));
+
+$db->createTable('table');
+$db->getData();
+
+$db->insertRow('table', ['key' => 'value2']);
+$db->insertRow('table', ['key' => 'value3']);
+$db->insertRow('table', ['key' => 'value4']);
+$db->insertRow('table', ['key' => 'value5']);
+
+//var_dump($db->getRow('table', 0));
 //var_dump($db->replaceRow('table', ['key3'=>'replaced'], 1));
 
-var_dump($db->createTable('table'));
 
-var_dump($db->insertRow('table','innerTable', 1));
+
+//var_dump($db->insertRow('table','innerTable'));
+
+var_dump($db);
+//var_dump($db->rowExists('table',2));
+var_dump($db->getRowsWhere('table', ['key' => 'value4']));
 
