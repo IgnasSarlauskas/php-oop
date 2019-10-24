@@ -1,6 +1,7 @@
 <?php
 
 require 'functions/file.php';
+require 'classes/drinks/FileDB.php';
 require 'classes/FileDB.php';
 
 //$info = new FileDB('info');
