@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+namespace App\Sandwiches;
 
 class Sandwich {
 
@@ -35,7 +35,6 @@ class Sandwich {
             'price' => $this->getPrice(),
             'vegan' => $this->getType(),
             'image' => $this->getImage(),
-            'id'=> $this->getId(),
         ];
     }
 

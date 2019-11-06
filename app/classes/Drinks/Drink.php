@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+namespace App\Drinks;
 
 class Drink {
 
-    private $data = [];
-
+    protected $data = [];
+    
     public function __construct(array $data = null) {
+        
         if ($data == null) {
             return $this->data = [
                 'name' => null,
@@ -18,15 +19,19 @@ class Drink {
         } else {
             return $this->setData($data);
         }
+             
     }
-
+    
     public function getData() {
-        return [
+        $data = [
             'name' => $this->getName(),
             'amount' => $this->getAmount(),
             'abarot' => $this->getAbarot(),
             'image' => $this->getImage(),
+            'id' => $this-> getId(),
         ];
+        
+        return $data;
     }
 
     public function setData(array $data) {
@@ -97,8 +102,9 @@ class Drink {
         $this->data['id'] = $id;
     }
     
-    public function getId(int $id) {
+    public function getId() {
         return $this->data['id'];
     }
+    
 
 }

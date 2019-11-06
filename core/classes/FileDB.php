@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 class FileDB {
 
     private $file_name;
@@ -122,9 +124,9 @@ class FileDB {
         }
     }
 
-    public function updateRow($table_name, $row_id, $row) {
+    public function updateRow($table_name, $row, $row_id) {
         if ($this->rowExists($table_name, $row_id)) {
-            return $this->data[$table][$row_id] = $row;
+            $this->data[$table_name][$row_id] = $row;
             return true;
         }
 
@@ -133,33 +135,35 @@ class FileDB {
 
     public function deleteRow($table_name, $row_id) {
         if ($this->rowExists($table_name, $row_id)) {
-            $this->data[$table_name][$row_id] = [];
+//            $this->data[$table_name][$row_id] = [];
+            unset($this->data[$table_name][$row_id]);
             return true;
         }
 
         return false;
     }
 
-    public function getRowsWhere($table_name, $conditions) {
-        $rows = [];
-        foreach ($this->data[$table_name] as $table_row_id => $table_row) {
-            $success = true;
-            foreach ($conditions as $condition_id => $condition) {
-                if ($table_row[$condition_id] === $condition) { 
-                    $success = false;
-                    break;
+    public function getRowsWhere($table_name, $conditions_array) {
+        if ($this->tableExists($table_name)) {
+            $new_table = [];
+            foreach ($this->data[$table_name] as $row_id => $row) {
+                $success = true;
+                foreach ($conditions_array as $condition_id => $condition) {
+                    if ($row[$condition_id] !== $condition) {
+                        $success = false;
+                        break;
+                    }
+                }
+                if ($success) {
+                    $row['row_id'] = $row_id;
+                    $new_table[$row_id] = $row;
                 }
             }
-            
-            if ($success) {
-                $rows['table_row_id'] = $table_row_id;
-                $rows[$table_row_id] = $table_row;
-            }
+            return $new_table;
         }
-        
-        return $rows;
+        return false;
     }
-    
+
     public function __destruct() {
         $this->save();
     }
