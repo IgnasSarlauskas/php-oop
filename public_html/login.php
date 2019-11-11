@@ -1,96 +1,89 @@
 <?php
 
-require('../core/functions/file.php');
-require('../bootloader.php');
-require('../core/functions/form/core.php');
-require('../core/functions/html/generators.php');
+require '../bootloader.php';
 
-use App\App;
+if (isset($_SESSION['logged_in_user'])) {
+	header('Location: index.php');
+}
 
 $form = [
-    'attr' => [],
-    'fields' => [
-        'email' => [
-            'type' => 'text',
-            'extra' => [
-                'attr' => [
-                    'placeholder' => 'Email',
-                    'class' => 'email',
-                ],
-            ],
-            'validate' => [
-                'validate_not_empty',
-                'validate_email_exists',
-//                'validate_email',
-                'validate_email_unique',
-            ]
-        ],
-        'password' => [
-            'type' => 'password',
-            'extra' => [
-                'attr' => [
-                    'placeholder' => 'Password',
-                    'class' => 'password',
-                ]
-            ],
-            'validate' => [
-                'validate_not_empty',
-            ]
-        ],
-    ],
-    'buttons' => [
-        'login' => [
-            'type' => 'submit',
-            'value' => 'Login',
-            'class' => 'submit-button',
-        ],
-    ],
-    'validators' => [
-       'validate_login',
-    ],
-    'callbacks' => [
-        'success' => 'form_success',
-        'fail' => 'form_fail'
-    ],
+	'title' => 'Prisijungti',
+	'fields' => [
+		'email' => [
+			'type' => 'text',
+			'label' => 'Email:',
+			'extra' => [
+				'attr' => [
+					'placeholder' => 'email@email.com'
+				]
+			],
+			'validators' => [
+				'validate_not_empty',
+				'validate_email_exists'
+			]
+		],
+		'password' => [
+			'type' => 'password',
+			'label' => 'New password:',
+			'extra' => [
+				'attr' => [
+					'placeholder' => 'slaptažodis'
+				]
+			],
+			'validators' => [
+				'validate_not_empty'
+			]
+		]
+	],
+	'buttons' => [
+		'login' => [
+			'type' => 'submit',
+			'class' => 'button'
+		]
+	],
+	'validators' => [
+		'validate_login'
+	],
+	'callbacks' => [
+		'success' => 'form_success',
+		'fail' => 'form_fail'
+	]
 ];
 
+function form_fail($filtered_input, &$form) {
+	unset($form['fields']['password']['value']);
+}
+
+function form_success($filtered_input, $form) {
+	$modelUser = new \App\Users\Model();
+	$_SESSION['logged_in_user'] = $modelUser->get($filtered_input)[0];
+	
+	header('Location: index.php');
+}
 
 $filtered_input = get_filtered_input($form);
 
 if (!empty($filtered_input)) {
-    validate_form($filtered_input, $form);
+	validate_form($filtered_input, $form);
 }
-
-function form_success($filtered_input, $form)
-{
-    $modelUsers = new \App\Users\Model();
-    $users_array = $modelUsers->getUser();
-    var_dump($filtered_input);
-    foreach ($users_array as $user) {
-        if ($user->getEmail() == $filtered_input['email'] && $user->getPassword() == $filtered_input['password']) {
-            $_SESSION = [
-                'email' => $filtered_input['email'],
-                'password' => $filtered_input['password'],
-            ];
-            header('Location:success.php');
-            break;
-        }
-    }
-}
-function form_fail($filtered_input, &$form) {}
-
-$cookie = new Core\Cookie('cookie_test');
 
 ?>
-
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>login</title>
-    <link rel="stylesheet" href="./media/form-styles.css">
-</head>
-<body>
-    <?php include './particles/navigation.php'; ?>
-    <?php require('../core/templates/form.tpl.php'); ?>
-</body>
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Login</title>
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/style.css">
+	</head>
+	<body>
+		<!--Require navigation-->
+		<?php require ROOT . '/app/templates/nav.tpl.php'; ?>
+		
+		<!--Require form template-->
+		<?php require ROOT . '/core/templates/form.tpl.php'; ?>
+		<div class="wrapper">
+			<p>Arba <a href="register.php">registruotis!</a></p>
+		</div>
+    </body>
 </html>

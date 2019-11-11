@@ -3,17 +3,16 @@
 namespace App\Drinks;
 
 class LightDrink extends Drink {
-
-    public function drink() {
-        return parent::setAmount(parent::getAmount() - 100);
-    }
-
-    public function getImage(): ?string {
-        if (parent::getImage() == null) {
-            return 'https://cdn.pixabay.com/photo/2018/05/31/16/51/glass-of-beer-3444480__340.jpg';
-        } else {
-            return parent::getImage();
-        }
-    }
-
+	
+	public function drink() {
+		$this->setAmount($this->getAmount() - 100);
+	}
+	
+	public function getImage(): ?string {
+		if (parent::getImage() == null) {
+			return 'http://www.mainyk.lt/img/items/90/73/34/4cf2a5242c174.jpg';
+		}
+		
+		return parent::getImage();
+	}
 }

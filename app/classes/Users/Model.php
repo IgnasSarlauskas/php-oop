@@ -2,77 +2,59 @@
 
 namespace App\Users;
 
-use Core\FileDB;
-use App\App;
-
 class Model {
-    private $db;
-    private $table_name = 'users';
-    
-     /**
-     * Model constructor.
-     * Sukuria FileDB objekta su failu nurodytu config.php
-     * Sukuria lentele FileDB objekte pagal modelyje nurodyta $table_name
-     */
-    public function __construct() {
-        $this->db = App::$db;
-        App::$db->createTable($this->table_name);
-    }
-    
-    /**
-     * @param User $user
-     * Konvertuoja User objekta i array ir iraso i lentele FileDB objekte.
-     */
-    public function insertUser(User $user) {
-        return App::$db->insertRow($this->table_name, $user->getData());
-    }
-    
-     /**
-     * Suranda User objektus, kurie turi $conditions pateiktas savybes ir jas grazina naujame array.
-     * @param array $conditions
-     * @return array
-     */
-    public function getUser(array $conditions=[]) {
-        
-        $array = App::$db->getRowsWhere($this->table_name, $conditions);
-        $new_array = [];
-        foreach ($array as $object_id => $object) {
-            $object['id'] = $object['row_id'];
-            $new_array[] = new User($object);
-        }
-        return $new_array;
-    }
-    
-    /**
-     * @param User $user
-     * @return bool
-     * paduodamas User objektas $user turi tureti 'id'.
-     * Pagal ji perrasomas anksciau buves objektas su tuo id.
-     */
-    public function updateUser(User $user) {
-        $user_array = $user->getData();
-        return App::$db->updateRow($this->table_name, $user_array, $user_array['id']);
-    }
-    
-    /**
-     * @param User $user
-     * @return bool
-     * Panaudojus funkcija getUsers ir sukurus jai variable.
-     * Sukamas foreach per sukurta variable ir foreach viduje iskvieciam sia funkcija.
-     * Si funkcija istrina objekta Drink getDrinks funkcija gautus objektus.
-     */
-    
-    public function deleteUser(User $user) {
-        $user_array = $user->getData();
-        return App::$db->deleteRow($this->table_name, $user_array['id']);
-    }
-    
-    /**
-     * @return bool
-     * Funkcija istrina visus User objektus esancius lenteleje.
-     */
-    
-    public function deleteAll() {
-        return App::$db->truncateTable($this->table_name);
-    }
+	
+	protected $table_name = 'users';
+
+	public function __construct() {
+		\App\App::$db->createTable($this->table_name);
+	}
+
+	public function insert(User $user) {
+		return \App\App::$db->insertRow($this->table_name, $user->getData());
+	}
+
+	/**
+	 * @param array $conditions
+	 * @return array
+	 */
+	public function get(array $conditions = []): array {
+		$users = [];
+
+		$rows = \App\App::$db->getRowsWhere($this->table_name, $conditions);
+
+		foreach ($rows as $row) {
+			$row['id'] = $row['row_id'];
+			$users[] = new User($row);
+		}
+		
+		return $users;
+	}
+
+	/**
+	 * Update selected user
+	 * @param \App\Users\User $user
+	 * @return bool
+	 */
+	public function update(User $user): bool {
+		return \App\App::$db->updateRow($this->table_name, $user->getID(), $user->getData());
+	}
+
+	/**
+	 * Delete selected user
+	 * @param \App\Users\User $user
+	 * @return bool
+	 */
+	public function delete(User $user): bool {
+		return \App\App::$db->deleteRow($this->table_name, $user->getID());
+	}
+	
+	/**
+	 * Delete all users
+	 * @return bool
+	 */
+	public function deleteAll(): bool {
+		return \App\App::$db->truncateTable($this->table_name);
+	}
+
 }

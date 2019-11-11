@@ -1,222 +1,169 @@
 <?php
-
-require '../core/functions/file.php';
 require '../bootloader.php';
-require('../core/functions/form/core.php');
-require('../core/functions/html/generators.php');
 
-$alus = [
-    'name' => 'alus',
-    'amount' => 500,
-    'abarot' => 5,
-    'image' => null,
-    'id' => 1236,
-];
-
-$sultys = [
-    'name' => 'sultys',
-    'amount' => 300,
-    'abarot' => 5,
-    'image' => 'url()',
-    'id' => 1244,
-];
-
-//$fileDB = new \Core\FileDB(DB_FILE);
 $modelDrinks = new \App\Drinks\Model();
 
-$strongDrink = new \App\Drinks\StrongDrink($alus);
-$strongDrink->getAmount();
-//var_dump($strongDrink->getImage());
-//var_dump($strongDrink);
-
-
-//$sultys_drink = new\App\Drinks\Drink($sultys);
-//$alus_drink = new\App\Drinks\Drink($alus);
-//
-//
-//$modelDrinks->insert($sultys_drink);
-//$modelDrinks->insert($alus_drink);
-//var_dump($modelDrinks);
-// Inputs form array
-
 $form = [
-    'attr' => [],
+    'title' => 'Insert Drink',
     'fields' => [
         'name' => [
             'type' => 'text',
+            'label' => 'Drink name:',
             'extra' => [
                 'attr' => [
-                    'placeholder' => 'name',
+                    'placeholder' => 'Pavadinimas',
                 ],
             ],
-            'validate' => [
+            'validators' => [
                 'validate_not_empty',
-//                'validate_email_unique',
-            ]
+            ],
         ],
-        'amount' => [
+        'amount_ml' => [
             'type' => 'number',
+            'label' => 'Amount in ml:',
             'extra' => [
                 'attr' => [
-                    'placeholder' => 'amount',
-                ]
+                    'placeholder' => 'Talpa',
+                ],
             ],
-            'validate' => [
+            'validators' => [
                 'validate_not_empty',
-            ]
+            ],
         ],
         'abarot' => [
             'type' => 'number',
+            'label' => 'Abarot:',
             'extra' => [
                 'attr' => [
-                    'placeholder' => 'abarotai',
-                ]
+                    'placeholder' => 'Laipsniai',
+                ],
             ],
-            'validate' => [
+            'validators' => [
                 'validate_not_empty',
-            ]
+            ],
         ],
         'image' => [
             'type' => 'url',
+            'label' => 'Image URL:',
             'extra' => [
                 'attr' => [
-                    'placeholder' => 'picture url',
-                ]
-            ],
-            'validate' => [
-                'validate_not_empty',
-            ]
-        ],
-        'select' => [
-            'type' => 'select',
-            'extra' => [
-                'attr' => [
-                    'placeholder' => 'select',
+                    'placeholder' => 'Paveikslelio nuoroda',
                 ],
-                'options' => [],
             ],
-            'valdiate' => [
+            'validators' => [
                 'validate_not_empty',
             ],
-        ],
+        ]
     ],
     'buttons' => [
-        'submit' => [
-            'name' => 'action',
-            'value' => 'submit',
+        'insert' => [
             'type' => 'submit',
         ],
-        'update' => [
-            'name' => 'action',
-            'value' => 'update',
+        'delete all' => [
             'type' => 'submit',
-        ],
-        'delete' => [
-            'name' => 'action',
-            'value' => 'delete',
-            'type' => 'submit',
-        ],
+        ]
     ],
-    'validators' => [],
     'callbacks' => [
-        'success' => 'form_success',
-        'fail' => 'form_fail'
+        'success' => 'form_success'
     ],
 ];
 
-
-$filtered_input = get_filtered_input($form);
-
-foreach ($modelDrinks->get() as $drink) {
-    $form['fields']['select']['options'][$drink->getId()] = $drink->getName();
-}
-
-
-function form_success($filtered_input, $form) {
+function form_success($filtered_input, &$form) {
     $modelDrinks = new \App\Drinks\Model();
-    $drink = new \App\Drinks\Drink($filtered_input);
-//    var_dump($modelDrinks->insert($drink));
+    $drink = new App\Drinks\Drink($filtered_input);
     $modelDrinks->insert($drink);
 }
 
-function form_fail($filtered_input, &$form) {
-    
-}
-
+$filtered_input = get_filtered_input($form);
 $button = get_form_action();
 
 switch ($button) {
-    case 'submit':
+    case 'insert':
         if (!empty($filtered_input)) {
             validate_form($filtered_input, $form);
         }
         break;
-    case 'delete':
+    case 'delete all':
         $modelDrinks->deleteAll();
         break;
-    case 'update':
-        session_start();
-        $filtered_input = get_filtered_input($form);
-//        $modelDrinks->get(['name' => 'smirnof']);
-        $_SESSION = [
-            'id' => $filtered_input['select'],
-        ];
-        header('Location:update.php');
 }
 
+//$cookie = new \Core\Cookie('newCookie');
+//$cookie->save(['verte']);
+//$cookie->delete();
+//$nav = [
+//    'image' => 'media/icon.png',
+//    'links' => [
+//        [
+//            'url' => 'drinks.php',
+//            'title' => 'Drinks',
+//        ],
+//        [
+//            'url' => 'register.php',
+//            'title' => 'Register',
+//        ],
+//        [
+//            'url' => 'login.php',
+//            'title' => 'Login',
+//        ],
+//        [
+//            'url' => '#',
+//            'title' => 'Logout',
+//        ],
+//    ]
+//];
 
+$formView = new \Core\Views\View($form);
 
-//$user_array = ['name' => 'test', 'email' => 'email@email.com', 'password' => 'password'];
-//$user1 = new \App\Users\User($user_array);
-//var_dump($user1);
+$navigationView = new \App\Views\Navigation();
 ?>
-
 <html>
     <head>
-        <title>index</title>
-        <link rel="stylesheet" href="../public_html/media/style.css">
-         <link rel="stylesheet" href="./media/form-styles.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home</title>
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/style.css">
     </head>
-    <style>
-        .img {
-            width: 150px;
-            height: 205px;
-        }
 
-        .drinks-container {
-            display: flex;
-
-        }
-
-        .drink-container {
-            display: block;
-            margin: 0 auto;
-            margin-top: 450px;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-    </style>
     <body>
-        <?php include './particles/navigation.php'; ?>
-        <div class="form-container"> <?php require('../core/templates/form.tpl.php'); ?></div>
-        <div class="drink-container">
-            <?php foreach ($modelDrinks->get() as $drink_id => $drink): ?>
-                <div class="drink-container">
-                    <img  class ="img" alt="<?php $drink->getName(); ?>" src="<?php print $drink->getImage(); ?>">
-                    <div class=""><?php print "Pavadinimas: {$drink->getName()}"; ?></div>
-                    <div class=""><?php print"Laipsniai: {$drink->getAbarot()} %"; ?></div>
-                    <div class=""><?php print "Turis {$drink->getAmount()} ml"; ?></div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <!--Require navigation-->
+        <?php print $navigationView->render(ROOT . '/app/templates/nav.tpl.php'); ?>
 
-        
+        <!--Require form template-->
+        <?php if (isset($_SESSION['logged_in_user'])): ?>
+            <?php require ROOT . '/core/templates/form.tpl.php'; ?>
+        <?php else: ?>
+            <div class="wrapper">
+                <p>Nori įrašyti gėrimą? <a href="login.php">Prisijunk!</a></p>
+            </div>
+        <?php endif; ?>
+
+        <div class="catalogue">
+            <div class="wrapper">
+                <?php foreach ($modelDrinks->get() as $drink): ?>
+                    <div class="bottle">
+                        <img src="<?php print $drink->getImage(); ?>" alt="<?php $drink->getName(); ?>">
+                        <div class='name'><?php print $drink->getName(); ?></div>
+                        <div class="abarot"><?php print"Laipsniai: {$drink->getAbarot()} %"; ?></div>
+                        <div class="Amount"><?php print "Tūris {$drink->getAmount()} ml"; ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+<!--        <script src="js/fetch.js"></script>-->
+        <script>
+
+            const formData = new FormData();
+
+            formData.append('name','Sprite');
+
+            fetch('api/drinks/get.php', {
+                method: 'POST',
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => console.log(data.data));
+        </script>
     </body>
 </html>
-
-
-
-

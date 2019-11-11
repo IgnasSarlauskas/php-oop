@@ -2,16 +2,19 @@
 
 declare(strict_types = 1);
 
-require 'config.php';
-
-// load autoload.php
-
-require ROOT . '/vendor/autoload.php';
-$app = new \App\App();
-
 session_start();
 
-//require 'core/functions/file.php';
-//require 'app/classes/Drinks/Drink.php';
-//require 'app/classes/Sandwiches/Sandwich.php';
-//require 'app/classes/FileDB.php';
+require 'config.php';
+
+// Load Composer
+require ROOT . '/vendor/autoload.php';
+
+// Load Core Functions
+require ROOT . '/core/functions/file.php';
+require ROOT . '/core/functions/form/core.php';
+require ROOT . '/core/functions/html/generators.php';
+
+// Load App Functions
+require ROOT . '/app/functions/form/validators.php';
+
+$app = new App\App();

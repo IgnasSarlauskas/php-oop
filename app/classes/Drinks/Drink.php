@@ -4,107 +4,139 @@ namespace App\Drinks;
 
 class Drink {
 
-    protected $data = [];
-    
-    public function __construct(array $data = null) {
-        
-        if ($data == null) {
-            return $this->data = [
-                'name' => null,
-                'amount' => null,
-                'abarot' => null,
-                'image' => null,
-                'id' => null,
-            ];
-        } else {
-            return $this->setData($data);
-        }
-             
-    }
-    
-    public function getData() {
-        $data = [
-            'name' => $this->getName(),
-            'amount' => $this->getAmount(),
-            'abarot' => $this->getAbarot(),
-            'image' => $this->getImage(),
-            'id' => $this-> getId(),
-        ];
-        
-        return $data;
-    }
+	/**
+	 * @var array
+	 */
+	private $data = [];
 
-    public function setData(array $data) {
-        if (isset($data['name'])) {
-            $this->setName($data['name']);
-        } else {
-            $this->data['name'] = null;
-        }
+	public function __construct(array $data = null) {
+		if ($data) {
+			$this->setData($data);
+		} else {
+			$this->data = [
+				'id' => null,
+				'name' => null,
+				'amount_ml' => null,
+				'abarot' => null,
+				'image' => null
+			];
+		}
+	}
 
-        if (isset($data['amount'])) {
-            $this->setAmount($data['amount']);
-        } else {
-            $this->data['amount'] = null;
-        }
+	/**
+	 * Sets all data from array
+	 * @param type $array
+	 */
+	public function setData(array $array) {
+		if (isset($array['id'])) {
+			$this->setID($array['id']);
+		} else {
+			$this->data['id'] = null;
+		}
+		$this->setName($array['name'] ?? null);
+		$this->setAmount($array['amount_ml'] ?? null);
+		$this->setAbarot($array['abarot'] ?? null);
+		$this->setImage($array['image'] ?? null);
+	}
 
-        if (isset($data['abarot'])) {
-            $this->setAbarot($data['abarot']);
-        } else {
-            $this->data['abarot'] = null;
-        }
+	/**
+	 * Gets all data as array
+	 * @return array
+	 */
+	public function getData(): array {
+		return [
+			'id' => $this->getID(),
+			'name' => $this->getName(),
+			'amount_ml' => $this->getAmount(),
+			'abarot' => $this->getAbarot(),
+			'image' => $this->getImage()
+		];
+	}
 
-        if (isset($data['image'])) {
-            $this->setImage($data['image']);
-        } else {
-            $this->data['image'] = null;
-        }
-        
-        if (isset($data['id'])) {
-            $this->setId($data['id']);
-        } else {
-            $this->data['id'] = null;
-        }
-    }
+	/**
+	 * Sets ID
+	 * @param int|null $id
+	 */
+	public function setID(?int $id) {
+		$this->data['id'] = $id;
+	}
+	
+	/**
+	 * Set data name
+	 * @param string $name
+	 */
+	public function setName(?string $name) {
+		$this->data['name'] = $name;
+	}
+	
+	/**
+	 * Set data amount
+	 * @param int $amount
+	 */
+	public function setAmount(?int $amount) {
+		if ($amount >= 0) {
+			$this->data['amount_ml'] = $amount;
+			return $this->data['amount_ml'];
+		} else {
+			$this->data['amount_ml'] = 0;
+			return 0;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param float|null $abarot
+	 */
+	public function setAbarot(?float $abarot) {
+		$this->data['abarot'] = $abarot;
+	}
+	
+	/**
+	 * 
+	 * @param string|null $image
+	 */
+	public function setImage(?string $image) {
+		$this->data['image'] = $image;
+	}
+	
+	/**
+	 * Gets ID
+	 * @return int|null
+	 */
+	public function getID(): ?int {
+		return $this->data['id'];
+	}
 
-    public function setName(string $name) {
-        $this->data['name'] = $name;
-    }
+	/**
+	 * Returns name
+	 * @return string|null
+	 */
+	public function getName(): ?string {
+		return $this->data['name'];
+	}
+	
+	/**
+	 * Returns amount in milliliters
+	 * @return int|null
+	 */
+	public function getAmount(): ?int {
+		return $this->data['amount_ml'];
+	}
 
-    public function getName() {
-        return $this->data['name'];
-    }
+	/**
+	 * Returns alcohol percentage
+	 * @return float|null
+	 */
+	public function getAbarot(): ?float {
+		return $this->data['abarot'];
+	}
 
-    public function setAmount(int $amount_ml) {
-        $this->data['amount'] = $amount_ml;
-    }
-
-    public function getAmount() {
-        return $this->data['amount'];
-    }
-
-    public function setAbarot(float $abarot) {
-        $this->data['abarot'] = $abarot;
-    }
-
-    public function getAbarot() {
-        return $this->data['abarot'];
-    }
-
-    public function setImage(string $url) {
-        $this->data['image'] = $url;
-    }
-
-    public function getImage() {
-        return $this->data['image'];
-    }
-    
-    public function setId(int $id) {
-        $this->data['id'] = $id;
-    }
-    
-    public function getId() {
-        return $this->data['id'];
-    }
-    
+	/**
+	 * Returns image url
+	 * @return string|null
+	 */
+	public function getImage(): ?string {
+		return $this->data['image'];
+	}
 
 }

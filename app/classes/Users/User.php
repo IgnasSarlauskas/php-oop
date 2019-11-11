@@ -4,71 +4,88 @@ namespace App\Users;
 
 class User {
 
-    private $data = [];
+	private $data = [];
 
-    public function __construct(array $data = null) {
+	public function __construct($data = null) {
+		if ($data) {
+			$this->setData($data);
+		} else {
+			$this->data = [
+				'email' => null,
+				'name' => null,
+				'password' => null
+			];
+		}
+	}
 
-        if ($data == null) {
-            return $this->data = [
-                'name' => null,
-                'email' => null,
-                'password' => null,
-            ];
-        } else {
-            return $this->setData($data);
-        }
-    }
+	/**
+	 * Sets all data from array
+	 * @param array $array
+	 */
+	public function setData(?array $array) {
+		$this->setEmail($array['email'] ?? null);
+		$this->setName($array['name'] ?? null);
+		$this->setPassword($array['password'] ?? null);
+	}
 
-    public function getData() {
-        return [
-            'name' => $this->getName(),
-            'email' => $this->getEmail(),
-            'password' => $this->getPassword(),
-        ];
-    }
+	/**
+	 * Gets all data as array
+	 * @return array
+	 */
+	public function getData(): array {
+		return [
+			'name' => $this->getName(),
+			'email' => $this->getEmail(),
+			'password' => $this->getPassword()
+		];
+	}
 
-    public function setData(array $data) {
-        if (isset($data['name'])) {
-            $this->setName($data['name']);
-        } else {
-            $this->data['name'] = null;
-        }
+	/**
+	 * Set email
+	 * @param string $email
+	 */
+	public function setEmail(?string $email) {
+		$this->data['email'] = $email;
+	}
 
-        if (isset($data['email'])) {
-            $this->setEmail($data['email']);
-        } else {
-            $this->data['email'] = null;
-        }
+	/**
+	 * Set name
+	 * @param string $name
+	 */
+	public function setName(?string $name) {
+		$this->data['name'] = $name;
+	}
 
-        if (isset($data['password'])) {
-            $this->setPassword($data['password']);
-        } else {
-            $this->data['password'] = null;
-        }
-    }
-    
-    public function setName(string $name) {
-        $this->data['name'] = $name;
-    }
+	/**
+	 * Set password
+	 * @param string $password
+	 */
+	public function setPassword(?string $password) {
+		$this->data['password'] = $password;
+	}
 
-    public function getName() {
-        return $this->data['name'];
-    }
-    
-    public function setEmail(string $email) {
-        $this->data['email'] = $email;
-    }
+	/**
+	 * Returns email
+	 * @return string|null
+	 */
+	public function getEmail(): ?string {
+		return $this->data['email'];
+	}
 
-    public function getEmail() {
-        return $this->data['email'];
-    }
-    
-    public function setPassword(string $password) {
-        $this->data['password'] = $password;
-    }
+	/**
+	 * Returns name
+	 * @return string|null
+	 */
+	public function getName(): ?string {
+		return $this->data['name'];
+	}
 
-    public function getPassword() {
-        return $this->data['password'];
-    }
+	/**
+	 * Returns password
+	 * @return string|null
+	 */
+	public function getPassword(): ?string {
+		return $this->data['password'];
+	}
 
 }

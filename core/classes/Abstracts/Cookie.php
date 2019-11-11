@@ -14,11 +14,9 @@ abstract class Cookie {
     protected $name;
 
     /**
-     * Konstruktorius paprasčiausia turi nuset'tintis $name
+     * Konstruktorius paprasčiausia turi nuset'tinti $name
      */
     abstract public function __construct(string $name);
-        
-    
 
     /**
      * Turi patikrinti ar cookie duotu pavadinimu
@@ -64,4 +62,5 @@ abstract class Cookie {
      * (Use google)
      */
     abstract public function delete(): void;
+    
 }

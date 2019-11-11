@@ -2,81 +2,61 @@
 
 namespace App\Drinks;
 
-use Core\FileDB;
-use App\App;
-
 class Model {
 
-    private $db;
-    private $table_name = 'drinks';
+	protected $table_name = 'drinks';
 
-    /**
-     * Model constructor.
-     * Sukuria FileDB objekta su failu nurodytu config.php
-     * Sukuria lentele FileDB objekte pagal modelyje nurodyta $table_name
-     */
-    public function __construct() {
-        $this->db = App::$db;
-        App::$db->createTable($this->table_name);
-    }
+	public function __construct() {
+		\App\App::$db->createTable($this->table_name);
+	}
 
-    /**
-     * @param Drink $drink
-     * Konvertuoja Drink objekta i array ir iraso i lentele FileDB objekte.
-     */
-    public function insert(Drink $drink) {
-        return App::$db->insertRow($this->table_name, $drink->getData());
-    }
+	public function insert(Drink $drink) {
+		return \App\App::$db->insertRow($this->table_name, $drink->getData());
+	}
 
-    /**
-     * Suranda Drink objektus, kurie turi $conditions pateiktas savybes ir jas grazina naujame array.
-     * @param array $conditions
-     * @return array
-     */
-    public function get(array $conditions = []) {
+	public function get(array $conditions = []): array {
+		$drinks = [];
 
-        $array = App::$db->getRowsWhere($this->table_name, $conditions);
-        $new_array = [];
-        foreach ($array as $object_id => $object) {
-            $object['id'] = $object['row_id'];
-            if ($object['abarot'] > 20) {
-                $new_array[] = new StrongDrink($object);
-            } else {
-                $new_array[] = new LightDrink($object);
-            }
-        }
-        return $new_array;
-    }
+		$rows = \App\App::$db->getRowsWhere($this->table_name, $conditions);
 
-    /**
-     * @param Drink $drink
-     * @return bool
-     * paduodamas Drink objektas $drink turi tureti 'id'.
-     * Pagal ji perrasomas anksciau buves objektas su tuo id.
-     */
-    public function updateDrink(Drink $drink) {
-        $drink_array = $drink->getData();
-        return App::$db->updateRow($this->table_name, $drink_array, $drink_array['id']);
-    }
+		foreach ($rows as $row) {
+			$row['id'] = $row['row_id'];
 
-    /**
-     * @param Drink $drink
-     * @return bool
-     * Panaudojus funkcija getDrinks ir sukurus jai variable.
-     * Sukamas foreach per sukurta variable ir foreach viduje iskvieciam sia funkcija.
-     * Si funkcija istrina objekta Drink getDrinks funkcija gautus objektus.
-     */
-    public function deleteDrink(Drink $drink) {
-        $drink_array = $drink->getData();
-        return App::$db->deleteRow($this->table_name, $drink_array['id']);
-    }
+			if ($row['abarot'] > 20) {
+				$drinks[] = new StrongDrink($row);
+			} else {
+				$drinks[] = new LightDrink($row);
+			}
 
-    /**
-     * @return bool
-     * Funkcija istrina visus Drink objektus esancius lenteleje.
-     */
-    public function deleteAll() {
-        return App::$db->truncateTable($this->table_name);
-    }
+		}
 
+		return $drinks;
+	}
+
+	/**
+	 * Update selected drink
+	 * @param \App\Drinks\Drink $drink
+	 * @return bool
+	 */
+	public function update(Drink $drink): bool {
+		return \App\App::$db->updateRow($this->table_name, $drink->getID(), $drink->getData());
+	}
+
+	/**
+	 * Delete a drink
+	 * @param \App\Drinks\Drink $drink
+	 * @return bool
+	 */
+	public function delete(Drink $drink): bool {
+		return \App\App::$db->deleteRow($this->table_name, $drink->getID());
+	}
+
+	/**
+	 * Delete all drinks
+	 * @return bool
+	 */
+	public function deleteAll(): bool {
+		return \App\App::$db->truncateTable($this->table_name);
+	}
+	
 }
